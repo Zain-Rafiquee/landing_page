@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            background: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header - Hidden on Desktop */
+        .header {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: none;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                display: flex;
+                padding: 10px 15px;
+                margin: 0;
+                line-height: 1;
+                background: rgba(255, 255, 255, 0.95);
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 100;
+            }
+
+            .header-text {
+                line-height: 1;
+                margin: 0;
+                padding: 0;
+            }
+
+            .header-text .static-text,
+            .header-text .changing-text {
+                font-size: 17px;
+                line-height: 1;
+            }
+        }
+
+        .header-text {
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+            white-space: nowrap;
+        }
+
+        .header-text.show {
+            opacity: 1;
+        }
+
+        .header-text .static-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: #000;
+            display: inline;
+        }
+
+        .header-text .changing-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: #E85A71;
+            display: inline;
+            border-right: 3px solid #E85A71;
+            padding-right: 5px;
+        }
+
+        /* Desktop Header */
+        @media (min-width: 769px) {
+            .header-text .static-text,
+            .header-text .changing-text {
+                font-size: 32px;
+            }
+        }
+
+        /* Hero Title Text - Hidden, moved to header */
+        .hero-title {
+            display: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                margin-top: 0;
+                padding-top: 0;
+            }
+        }
+
+        /* Video Background */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Image Carousel */
+        .hero-carousel {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero-carousel.show {
+            opacity: 1;
+        }
+
+        .hero-carousel::before,
+        .hero-carousel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 100px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hero-carousel::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(248,248,248,0.8), transparent);
+        }
+
+        .hero-carousel::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(248,248,248,0.8), transparent);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 15px;
+            animation: scroll-images 30s linear infinite;
+            width: max-content;
+        }
+
+        .carousel-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-images {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .carousel-image {
+            width: 220px;
+            height: 391px;
+            object-fit: cover;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Apply Button Container */
+        .hero-btn-container {
+            margin-top: 40px;
+            text-align: center;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero-btn-container.show {
+            opacity: 1;
+        }
+
+        /* Hero Card */
+        .hero-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            width: 320px;
+            max-width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4), 0 10px 25px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 1s ease;
+            text-align: center;
+        }
+
+        /* Pink Overlay Layer */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(232, 90, 113, 0.20);
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero-overlay.show {
+            opacity: 1;
+        }
+
+        .hero-card.show {
+            opacity: 1;
+        }
+
+        .hero-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            display: block;
+        }
+
+        /* Hero Buttons Container */
+        .hero-buttons {
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .hero-buttons.show {
+            opacity: 1;
+        }
+
+        /* Quick Steps Button (Pink) */
+        .quick-steps-btn {
+            display: inline-block;
+            background: #E85A71;
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(232, 90, 113, 0.4);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border: 2px solid #E85A71;
+        }
+
+        .quick-steps-btn:hover {
+            background: #fff;
+            color: #E85A71;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(232, 90, 113, 0.5);
+        }
+
+        /* Register Now Button (Pink) */
+        .register-btn {
+            display: inline-block;
+            background: #E85A71;
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(232, 90, 113, 0.4);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border: 2px solid #E85A71;
+        }
+
+        .register-btn:hover {
+            background: #fff;
+            color: #E85A71;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(232, 90, 113, 0.5);
+        }
+
+        /* Hero Title Text */
+        .hero-title {
+            text-align: center;
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 1s ease;
+            margin-bottom: 10px;
+        }
+
+        .hero-title.show {
+            opacity: 1;
+        }
+
+        .hero-title .static-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #000;
+            display: inline;
+        }
+
+        .hero-title .changing-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #E85A71;
+            display: inline;
+            border-right: 3px solid #E85A71;
+            padding-right: 5px;
+        }
+
+        /* Desktop Card */
+        @media (min-width: 769px) {
+            .hero-card {
+                width: 450px;
+            }
+
+            .hero-title .static-text,
+            .hero-title .changing-text {
+                font-size: 36px;
+            }
+        }
+
+        /* Mobile Title */
+        @media (max-width: 768px) {
+            .hero-title .static-text,
+            .hero-title .changing-text {
+                font-size: 22px;
+            }
+        }
+
+        .apply-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #E85A71, #ec4899);
+            color: #fff;
+            padding: 16px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(232, 90, 113, 0.5);
+        }
+
+        /* Down Arrow */
+        .scroll-down {
+            margin-top: 30px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .scroll-down.show {
+            opacity: 1;
+        }
+
+        .scroll-down i {
+            font-size: 32px;
+            color: #E85A71;
+            animation: bounce-arrow 2s infinite;
+        }
+
+        @keyframes bounce-arrow {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(15px); }
+            60% { transform: translateY(8px); }
+        }
+
+        /* Desktop Carousel */
+        @media (min-width: 769px) {
+            .carousel-image {
+                width: 320px;
+                height: 569px;
+            }
+
+            .carousel-track {
+                gap: 20px;
+            }
+        }
+
+        /* Mobile Carousel */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 100vh;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            .hero-video {
+                display: none;
+            }
+
+            .hero-title {
+                display: none;
+            }
+
+            /* Hide horizontal carousel on mobile */
+            .hero-carousel {
+                display: none;
+            }
+
+            /* Show mobile grid carousel */
+            .mobile-carousel {
+                display: flex !important;
+                width: 100%;
+                height: 100vh;
+                overflow: hidden;
+                gap: 8px;
+                padding: 0 10px;
+                margin: 0;
+                opacity: 0;
+                transition: opacity 1s ease;
+            }
+
+            .mobile-carousel.show {
+                opacity: 1;
+            }
+
+            .mobile-column {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                animation-timing-function: linear;
+                animation-iteration-count: infinite;
+            }
+
+            .mobile-column:nth-child(1) {
+                animation: scrollUp 25s linear infinite;
+            }
+
+            .mobile-column:nth-child(2) {
+                animation: scrollDown 25s linear infinite;
+            }
+
+            .mobile-column:nth-child(3) {
+                animation: scrollUp 25s linear infinite;
+            }
+
+            @keyframes scrollUp {
+                0% { transform: translateY(0); }
+                100% { transform: translateY(-50%); }
+            }
+
+            @keyframes scrollDown {
+                0% { transform: translateY(-50%); }
+                100% { transform: translateY(0); }
+            }
+
+            .mobile-column img {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 3/4;
+                object-fit: cover;
+                border-radius: 10px;
+                flex-shrink: 0;
+            }
+
+            .hero-card {
+                position: absolute;
+                top: 45%;
+                width: 260px;
+            }
+
+            .hero-buttons {
+                position: fixed !important;
+                bottom: 55px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                z-index: 60 !important;
+                top: auto !important;
+            }
+
+            .quick-steps-btn,
+            .register-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            /* White bottom padding area - now transparent */
+            .hero-bottom-padding {
+                display: none;
+            }
+
+            /* Scroll down arrow for mobile */
+            .mobile-scroll-arrow {
+                display: block;
+                position: fixed;
+                bottom: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 60;
+                opacity: 0;
+                transition: opacity 1s ease;
+            }
+
+            .mobile-scroll-arrow.show {
+                opacity: 1;
+            }
+
+            .mobile-scroll-arrow i {
+                font-size: 32px;
+                color: #E85A71;
+                animation: bounce-arrow 2s infinite;
+            }
+        }
+
+        /* Hide mobile carousel on desktop */
+        .mobile-carousel {
+            display: none;
+        }
+
+        .mobile-scroll-arrow {
+            display: none;
+        }
+
+        .hero-bottom-padding {
+            display: none;
+        }
+
+        /* Program Benefits Section */
+        .benefits-section {
+            background: #f8f8f8;
+            padding: 60px 20px;
+        }
+
+        .benefits-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .benefits-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .benefits-subtitle {
+            font-size: 15px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .benefits-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .benefit-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            background: #fce7f3;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .benefit-icon i {
+            font-size: 22px;
+            color: #ec4899;
+        }
+
+        .benefit-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .benefit-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Desktop Benefits */
+        @media (min-width: 769px) {
+            .benefits-section {
+                padding: 80px 40px;
+            }
+
+            .benefits-title {
+                font-size: 42px;
+            }
+
+            .benefits-subtitle {
+                font-size: 17px;
+            }
+
+            .benefits-grid {
+                flex-direction: row;
+                gap: 24px;
+            }
+
+            .benefit-card {
+                flex: 1;
+                padding: 30px;
+            }
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            background: #fff;
+            padding: 60px 20px;
+        }
+
+        .how-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .how-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .how-subtitle {
+            font-size: 15px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step-item {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 2px solid #e5e5e5;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.5);
+        }
+
+        .step-content h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-content h3 i {
+            color: #ec4899;
+            font-size: 16px;
+        }
+
+        .step-content p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Desktop How It Works */
+        @media (min-width: 769px) {
+            .how-it-works-section {
+                padding: 80px 40px;
+            }
+
+            .how-title {
+                font-size: 42px;
+            }
+
+            .how-subtitle {
+                font-size: 17px;
+            }
+
+            .step-item {
+                padding: 24px 30px;
+            }
+
+            .step-content h3 {
+                font-size: 19px;
+            }
+
+            .step-content p {
+                font-size: 15px;
+            }
+        }
+
+        /* Start Now Button */
+        .start-now-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .start-now-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            color: #fff;
+            padding: 16px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .start-now-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(236, 72, 153, 0.5);
+        }
+
+        /* Why Join Our Program Section */
+        .why-join-section {
+            background: #f8f8f8;
+            padding: 60px 20px;
+        }
+
+        .why-join-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .why-join-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .why-join-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        .why-join-item {
+            padding: 10px 0;
+        }
+
+        .why-join-item h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .why-join-item h3 i {
+            color: #ec4899;
+            font-size: 18px;
+        }
+
+        .why-join-item p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            padding-left: 28px;
+        }
+
+        /* Desktop Why Join */
+        @media (min-width: 769px) {
+            .why-join-section {
+                padding: 80px 40px;
+            }
+
+            .why-join-title {
+                font-size: 42px;
+            }
+
+            .why-join-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px 60px;
+            }
+
+            .why-join-item h3 {
+                font-size: 19px;
+            }
+
+            .why-join-item p {
+                font-size: 15px;
+            }
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+            padding: 60px 0;
+            overflow: hidden;
+        }
+
+        .testimonials-container {
+            max-width: 100%;
+        }
+
+        .testimonials-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .testimonials-slider {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .testimonials-track {
+            display: flex;
+            gap: 20px;
+            animation: scroll-testimonials 60s linear infinite;
+            width: max-content;
+        }
+
+        .testimonials-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-testimonials {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .testimonial-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            min-width: 300px;
+            max-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .testimonial-card p {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .testimonial-author strong {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .testimonial-author span {
+            font-size: 13px;
+            color: #ec4899;
+            font-weight: 500;
+        }
+
+        /* Desktop Testimonials */
+        @media (min-width: 769px) {
+            .testimonials-section {
+                padding: 80px 0;
+            }
+
+            .testimonials-title {
+                font-size: 42px;
+            }
+
+            .testimonial-card {
+                min-width: 350px;
+                max-width: 350px;
+                padding: 30px;
+            }
+
+            .testimonial-card p {
+                font-size: 15px;
+            }
+        }
+
+        /* Footer Section */
+        .footer-section {
+            background: #000;
+            padding: 60px 20px 30px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h3 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand h3 .pink {
+            color: #ec4899;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .footer-links h4,
+        .footer-connect h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links ul li a {
+            font-size: 14px;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links ul li a:hover {
+            color: #ec4899;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-icons a {
+            font-size: 20px;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ec4899;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Desktop Footer */
+        @media (min-width: 769px) {
+            .footer-section {
+                padding: 80px 40px 30px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                gap: 40px;
+            }
+
+            .footer-brand h3 {
+                font-size: 26px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 769px) {
+            .header {
+                padding: 20px 50px;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+
+            .header-btn {
+                padding: 12px 28px;
+                font-size: 15px;
+            }
+
+            .hero {
+                height: 100vh;
+            }
+
+            .typewriter-line {
+                font-size: 36px;
+            }
+
+            .shein-career {
+                font-size: 72px;
+            }
+
+            .got-your-back {
+                font-size: 32px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero {
+                height: 100vh;
+            }
+
+            .hero-video {
+                width: 100%;
+                height: 100%;
+            }
+
+            .typewriter-line {
+                font-size: 22px;
+            }
+
+            .shein-career {
+                font-size: 38px;
+            }
+
+            .got-your-back {
+                font-size: 18px;
+            }
+        }
+        /* Desktop block: page is only for mobile and tablets */
+        .desktop-block {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            color: #000;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            z-index: 9999;
+        }
+
+        .desktop-block h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .desktop-block p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            body > *:not(.desktop-block) {
+                display: none !important;
+            }
+
+            .desktop-block {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Shown on desktop only -->
+    <div class="desktop-block">
+        <div>
+            <h2>Not available on desktop</h2>
+            <p>Please open this page on your phone or tablet.</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-text">
+            <span class="static-text">Get Dress, </span>
+            <span class="changing-text" id="changingText"></span>
+        </div>
+    </header>
+
+    <!-- Hero Section with Video Background & Image Carousel -->
+    <section class="hero">
+        <!-- Video Background (Layer 1) -->
+        <video class="hero-video" id="heroVideo" autoplay muted playsinline webkit-playsinline>
+            <source src="bg.mp4" type="video/mp4">
+        </video>
+
+        <!-- Image Carousel (Layer 2) -->
+        <div class="hero-carousel">
+            <div class="carousel-track">
+                <!-- Original Images -->
+                <img src="images/fashion1.png" alt="Fashion 1" class="carousel-image">
+                <img src="images/fashion2.png" alt="Fashion 2" class="carousel-image">
+                <img src="images/fashion3.png" alt="Fashion 3" class="carousel-image">
+                <img src="images/fashion4.png" alt="Fashion 4" class="carousel-image">
+                <img src="images/fashion5.png" alt="Fashion 5" class="carousel-image">
+                <img src="images/fashion6.png" alt="Fashion 6" class="carousel-image">
+                <img src="images/fashion7.png" alt="Fashion 7" class="carousel-image">
+                <img src="images/fashion8.png" alt="Fashion 8" class="carousel-image">
+                <img src="images/fashion9.png" alt="Fashion 9" class="carousel-image">
+                <img src="images/fashion10.png" alt="Fashion 10" class="carousel-image">
+                <img src="images/fashion11.png" alt="Fashion 11" class="carousel-image">
+                <img src="images/fashion12.png" alt="Fashion 12" class="carousel-image">
+                <!-- Duplicate for seamless loop -->
+                <img src="images/fashion1.png" alt="Fashion 1" class="carousel-image">
+                <img src="images/fashion2.png" alt="Fashion 2" class="carousel-image">
+                <img src="images/fashion3.png" alt="Fashion 3" class="carousel-image">
+                <img src="images/fashion4.png" alt="Fashion 4" class="carousel-image">
+                <img src="images/fashion5.png" alt="Fashion 5" class="carousel-image">
+                <img src="images/fashion6.png" alt="Fashion 6" class="carousel-image">
+                <img src="images/fashion7.png" alt="Fashion 7" class="carousel-image">
+                <img src="images/fashion8.png" alt="Fashion 8" class="carousel-image">
+                <img src="images/fashion9.png" alt="Fashion 9" class="carousel-image">
+                <img src="images/fashion10.png" alt="Fashion 10" class="carousel-image">
+                <img src="images/fashion11.png" alt="Fashion 11" class="carousel-image">
+                <img src="images/fashion12.png" alt="Fashion 12" class="carousel-image">
+            </div>
+        </div>
+
+        <!-- Pink Overlay Layer -->
+        <div class="hero-overlay"></div>
+
+        <!-- Hero Card (Layer 3) -->
+        <div class="hero-card">
+            <img src="images/hero-card.png" alt="SHEIN - Make upto $700 Weekly">
+        </div>
+
+        <!-- Mobile Grid Carousel (3 columns) -->
+        <div class="mobile-carousel">
+            <!-- Column 1 - Scrolls Up -->
+            <div class="mobile-column">
+                <img src="images/fashion1.png" alt="Fashion">
+                <img src="images/fashion4.png" alt="Fashion">
+                <img src="images/fashion7.png" alt="Fashion">
+                <img src="images/fashion10.png" alt="Fashion">
+                <img src="images/fashion1.png" alt="Fashion">
+                <img src="images/fashion4.png" alt="Fashion">
+                <img src="images/fashion7.png" alt="Fashion">
+                <img src="images/fashion10.png" alt="Fashion">
+            </div>
+            <!-- Column 2 - Scrolls Down -->
+            <div class="mobile-column">
+                <img src="images/fashion2.png" alt="Fashion">
+                <img src="images/fashion5.png" alt="Fashion">
+                <img src="images/fashion8.png" alt="Fashion">
+                <img src="images/fashion11.png" alt="Fashion">
+                <img src="images/fashion2.png" alt="Fashion">
+                <img src="images/fashion5.png" alt="Fashion">
+                <img src="images/fashion8.png" alt="Fashion">
+                <img src="images/fashion11.png" alt="Fashion">
+            </div>
+            <!-- Column 3 - Scrolls Up -->
+            <div class="mobile-column">
+                <img src="images/fashion3.png" alt="Fashion">
+                <img src="images/fashion6.png" alt="Fashion">
+                <img src="images/fashion9.png" alt="Fashion">
+                <img src="images/fashion12.png" alt="Fashion">
+                <img src="images/fashion3.png" alt="Fashion">
+                <img src="images/fashion6.png" alt="Fashion">
+                <img src="images/fashion9.png" alt="Fashion">
+                <img src="images/fashion12.png" alt="Fashion">
+            </div>
+        </div>
+        
+        <!-- Hero Buttons -->
+        <div class="hero-buttons">
+            <a href="#howItWorks" class="quick-steps-btn">Quick Steps</a>
+            <a href="https://giftclick.org/?offer_id=1229&aff_id=207031" target="_self" class="register-btn">Register Now</a>
+        </div>
+
+        <!-- White Bottom Padding (Mobile) -->
+        <div class="hero-bottom-padding"></div>
+
+        <!-- Mobile Scroll Arrow -->
+        <div class="mobile-scroll-arrow" onclick="document.getElementById('howItWorks').scrollIntoView({behavior: 'smooth'})">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Next Section - Program Benefits -->
+    <section id="nextSection" class="benefits-section">
+        <div class="benefits-container">
+            <h2 class="benefits-title">Program Benefits</h2>
+            <p class="benefits-subtitle">Join our exclusive reviewer program and enjoy these amazing perks</p>
+            
+            <div class="benefits-grid">
+                <!-- Complimentary Products -->
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="images/order.png" alt="Complimentary Products" style="width: 40px; height: 40px;">
+                    </div>
+                    <h3>Complimentary Products</h3>
+                    <p>Receive items to review from SHEIN's latest collections at no cost to you</p>
+                </div>
+                
+                <!-- Paid Reviews -->
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="images/testimonial.png" alt="Paid Reviews" style="width: 40px; height: 40px;">
+                    </div>
+                    <h3>Paid Reviews</h3>
+                    <p>Earn money for each detailed review you submit for our products</p>
+                </div>
+                
+                <!-- Early Access -->
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="images/early-access.png" alt="Early Access" style="width: 40px; height: 40px;">
+                    </div>
+                    <h3>Early Access</h3>
+                    <p>Be among the first to try new styles before they're available to the public</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="howItWorks" class="how-it-works-section">
+        <div class="how-container">
+            <h2 class="how-title">How It Works</h2>
+            <p class="how-subtitle">Get started in 5 simple steps</p>
+            
+            <div class="steps-list">
+                <!-- Step 1 -->
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3><img src="images/recruitment.png" alt="Apply" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"> Apply</h3>
+                        <p>Fill out our simple application form and tell us about your fashion style and social media presence.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3><img src="images/checklist.png" alt="Get Selected" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"> Get Selected</h3>
+                        <p>Our team reviews applications and sends out acceptance mail or SMS to notify you that you've been selected.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3><img src="images/new-product.png" alt="Receive Products" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"> Receive Products</h3>
+                        <p>Selected reviewers receive SHEIN products delivered directly to their doorstep.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3><img src="images/review.png" alt="Create Reviews" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"> Create Reviews</h3>
+                        <p>Test products and create honest, detailed reviews about quality, fit, and style.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 5 -->
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3><img src="images/get-paid.png" alt="Get Paid" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"> Get Paid</h3>
+                        <p>Earn rewards for your reviews and continue to receive new items monthly.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Now Button -->
+            <div class="start-now-container">
+                <a href="https://uplevelrewarded.com/aff_c?offer_id=2224&aff_id=107601&source=Shereviewjob" class="start-now-btn">Start Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Join Our Program Section -->
+    <section class="why-join-section">
+        <div class="why-join-container">
+            <h2 class="why-join-title">Why Join Our Program?</h2>
+            
+            <div class="why-join-grid">
+                <!-- Build Your Portfolio -->
+                <div class="why-join-item">
+                    <h3><i class="fas fa-briefcase"></i> Build Your Portfolio</h3>
+                    <p>Create professional fashion content that can help build your personal brand.</p>
+                </div>
+                
+                <!-- Exclusive Community -->
+                <div class="why-join-item">
+                    <h3><i class="fas fa-users"></i> Exclusive Community</h3>
+                    <p>Join a network of fashion enthusiasts and industry professionals.</p>
+                </div>
+                
+                <!-- Flexible Schedule -->
+                <div class="why-join-item">
+                    <h3><i class="fas fa-clock"></i> Flexible Schedule</h3>
+                    <p>Review products on your own time with no strict deadlines.</p>
+                </div>
+                
+                <!-- Influence Products -->
+                <div class="why-join-item">
+                    <h3><i class="fas fa-chart-line"></i> Influence Products</h3>
+                    <p>Your feedback directly impacts future product development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="testimonials-container">
+            <h2 class="testimonials-title">What Our Reviewers Say</h2>
+            
+            <div class="testimonials-slider">
+                <div class="testimonials-track">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <p>"Being a SHEIN reviewer has allowed me to expand my wardrobe while earning money. The process is incredibly straightforward, and the team is supportive."</p>
+                        <div class="testimonial-author">
+                            <strong>Emma W.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <p>"I love how my feedback actually makes a difference. I've seen my suggestions implemented in newer versions of products I reviewed!"</p>
+                        <div class="testimonial-author">
+                            <strong>Alex T.</strong>
+                            <span>Style Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card">
+                        <p>"The flexibility is amazing! I can review products whenever I have time, and the items are always on-trend and high quality."</p>
+                        <div class="testimonial-author">
+                            <strong>Olivia M.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card">
+                        <p>"As a busy mom, reviewing for SHEIN is a great way to earn extra income. I get to try out the latest fashion trends and share my honest opinions."</p>
+                        <div class="testimonial-author">
+                            <strong>Rachel L.</strong>
+                            <span>Lifestyle Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 5 -->
+                    <div class="testimonial-card">
+                        <p>"I get to be a part of a brand that values my opinion and rewards me for it. It's an amazing opportunity to combine my love for fashion with earning money!"</p>
+                        <div class="testimonial-author">
+                            <strong>Sophia D.</strong>
+                            <span>Fashion Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 6 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN's product reviews give me the chance to work with a brand I genuinely love. It's not just about getting clothes â€“ it's about being part of a community!"</p>
+                        <div class="testimonial-author">
+                            <strong>Mia P.</strong>
+                            <span>Style Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 7 -->
+                    <div class="testimonial-card">
+                        <p>"I never thought I'd be able to review fashion products and get paid for it! The process is super simple, and the rewards keep me coming back."</p>
+                        <div class="testimonial-author">
+                            <strong>Jade S.</strong>
+                            <span>Fashionista</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 8 -->
+                    <div class="testimonial-card">
+                        <p>"I've been reviewing for SHEIN for months, and I'm so impressed with the quality and variety of their products. It's a fantastic way to earn from home!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lily G.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 9 -->
+                    <div class="testimonial-card">
+                        <p>"It's so easy to share my opinions with SHEIN! The items I receive are always trendy, and I love that I get to be a part of their fashion journey."</p>
+                        <div class="testimonial-author">
+                            <strong>Ella H.</strong>
+                            <span>Social Media Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 10 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN lets me be a voice in the fashion community while building my wardrobe! I love that I get to try products before they hit the stores."</p>
+                        <div class="testimonial-author">
+                            <strong>Chloe J.</strong>
+                            <span>Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 11 -->
+                    <div class="testimonial-card">
+                        <p>"Reviewing for SHEIN has been an exciting journey! Not only do I get paid for honest reviews, but I also get to help improve products for everyone."</p>
+                        <div class="testimonial-author">
+                            <strong>Zoey K.</strong>
+                            <span>Fashion Consultant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 12 -->
+                    <div class="testimonial-card">
+                        <p>"I appreciate how easy it is to submit my feedback and get compensated. It's a win-win situation, and I feel valued as a reviewer!"</p>
+                        <div class="testimonial-author">
+                            <strong>Nina W.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 13 -->
+                    <div class="testimonial-card">
+                        <p>"As an avid online shopper, I can honestly say this is the best review program I've ever been a part of. SHEIN's commitment to quality is unmatched."</p>
+                        <div class="testimonial-author">
+                            <strong>Tina A.</strong>
+                            <span>Style Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 14 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN's product review program has given me a chance to not only try new styles but also influence fashion trends. It's rewarding and fun!"</p>
+                        <div class="testimonial-author">
+                            <strong>Hannah B.</strong>
+                            <span>Trendsetter</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 15 -->
+                    <div class="testimonial-card">
+                        <p>"I've built so many great connections and have expanded my fashion horizons through this program. It's amazing to earn while doing something I love."</p>
+                        <div class="testimonial-author">
+                            <strong>Grace F.</strong>
+                            <span>Fashion Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 16 -->
+                    <div class="testimonial-card">
+                        <p>"Reviewing for SHEIN has been such a rewarding experience! I get to discover great pieces and help other shoppers make informed decisions."</p>
+                        <div class="testimonial-author">
+                            <strong>Audrey L.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 17 -->
+                    <div class="testimonial-card">
+                        <p>"What I love most is the ability to share my personal style and help others find amazing fashion items. It's such a fulfilling job!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lucy M.</strong>
+                            <span>Style Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 18 -->
+                    <div class="testimonial-card">
+                        <p>"The variety of products and the opportunity to work with a brand that listens to its customers makes this review process feel truly impactful."</p>
+                        <div class="testimonial-author">
+                            <strong>Ivy N.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 19 -->
+                    <div class="testimonial-card">
+                        <p>"I never thought reviewing fashion items could be so fun and rewarding. It's a great way to earn money while exploring the latest trends."</p>
+                        <div class="testimonial-author">
+                            <strong>Bella V.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 20 -->
+                    <div class="testimonial-card">
+                        <p>"Being a SHEIN reviewer is the perfect gig for anyone who loves fashion and enjoys sharing their thoughts on new products. I've had a blast!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lola C.</strong>
+                            <span>Style Expert</span>
+                        </div>
+                    </div>
+                    
+                    <!-- DUPLICATE FOR SEAMLESS LOOP -->
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <p>"Being a SHEIN reviewer has allowed me to expand my wardrobe while earning money. The process is incredibly straightforward, and the team is supportive."</p>
+                        <div class="testimonial-author">
+                            <strong>Emma W.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <p>"I love how my feedback actually makes a difference. I've seen my suggestions implemented in newer versions of products I reviewed!"</p>
+                        <div class="testimonial-author">
+                            <strong>Alex T.</strong>
+                            <span>Style Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card">
+                        <p>"The flexibility is amazing! I can review products whenever I have time, and the items are always on-trend and high quality."</p>
+                        <div class="testimonial-author">
+                            <strong>Olivia M.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card">
+                        <p>"As a busy mom, reviewing for SHEIN is a great way to earn extra income. I get to try out the latest fashion trends and share my honest opinions."</p>
+                        <div class="testimonial-author">
+                            <strong>Rachel L.</strong>
+                            <span>Lifestyle Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 5 -->
+                    <div class="testimonial-card">
+                        <p>"I get to be a part of a brand that values my opinion and rewards me for it. It's an amazing opportunity to combine my love for fashion with earning money!"</p>
+                        <div class="testimonial-author">
+                            <strong>Sophia D.</strong>
+                            <span>Fashion Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 6 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN's product reviews give me the chance to work with a brand I genuinely love. It's not just about getting clothes â€“ it's about being part of a community!"</p>
+                        <div class="testimonial-author">
+                            <strong>Mia P.</strong>
+                            <span>Style Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 7 -->
+                    <div class="testimonial-card">
+                        <p>"I never thought I'd be able to review fashion products and get paid for it! The process is super simple, and the rewards keep me coming back."</p>
+                        <div class="testimonial-author">
+                            <strong>Jade S.</strong>
+                            <span>Fashionista</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 8 -->
+                    <div class="testimonial-card">
+                        <p>"I've been reviewing for SHEIN for months, and I'm so impressed with the quality and variety of their products. It's a fantastic way to earn from home!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lily G.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 9 -->
+                    <div class="testimonial-card">
+                        <p>"It's so easy to share my opinions with SHEIN! The items I receive are always trendy, and I love that I get to be a part of their fashion journey."</p>
+                        <div class="testimonial-author">
+                            <strong>Ella H.</strong>
+                            <span>Social Media Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 10 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN lets me be a voice in the fashion community while building my wardrobe! I love that I get to try products before they hit the stores."</p>
+                        <div class="testimonial-author">
+                            <strong>Chloe J.</strong>
+                            <span>Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 11 -->
+                    <div class="testimonial-card">
+                        <p>"Reviewing for SHEIN has been an exciting journey! Not only do I get paid for honest reviews, but I also get to help improve products for everyone."</p>
+                        <div class="testimonial-author">
+                            <strong>Zoey K.</strong>
+                            <span>Fashion Consultant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 12 -->
+                    <div class="testimonial-card">
+                        <p>"I appreciate how easy it is to submit my feedback and get compensated. It's a win-win situation, and I feel valued as a reviewer!"</p>
+                        <div class="testimonial-author">
+                            <strong>Nina W.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 13 -->
+                    <div class="testimonial-card">
+                        <p>"As an avid online shopper, I can honestly say this is the best review program I've ever been a part of. SHEIN's commitment to quality is unmatched."</p>
+                        <div class="testimonial-author">
+                            <strong>Tina A.</strong>
+                            <span>Style Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 14 -->
+                    <div class="testimonial-card">
+                        <p>"SHEIN's product review program has given me a chance to not only try new styles but also influence fashion trends. It's rewarding and fun!"</p>
+                        <div class="testimonial-author">
+                            <strong>Hannah B.</strong>
+                            <span>Trendsetter</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 15 -->
+                    <div class="testimonial-card">
+                        <p>"I've built so many great connections and have expanded my fashion horizons through this program. It's amazing to earn while doing something I love."</p>
+                        <div class="testimonial-author">
+                            <strong>Grace F.</strong>
+                            <span>Fashion Influencer</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 16 -->
+                    <div class="testimonial-card">
+                        <p>"Reviewing for SHEIN has been such a rewarding experience! I get to discover great pieces and help other shoppers make informed decisions."</p>
+                        <div class="testimonial-author">
+                            <strong>Audrey L.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 17 -->
+                    <div class="testimonial-card">
+                        <p>"What I love most is the ability to share my personal style and help others find amazing fashion items. It's such a fulfilling job!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lucy M.</strong>
+                            <span>Style Enthusiast</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 18 -->
+                    <div class="testimonial-card">
+                        <p>"The variety of products and the opportunity to work with a brand that listens to its customers makes this review process feel truly impactful."</p>
+                        <div class="testimonial-author">
+                            <strong>Ivy N.</strong>
+                            <span>Fashion Blogger</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 19 -->
+                    <div class="testimonial-card">
+                        <p>"I never thought reviewing fashion items could be so fun and rewarding. It's a great way to earn money while exploring the latest trends."</p>
+                        <div class="testimonial-author">
+                            <strong>Bella V.</strong>
+                            <span>Content Creator</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 20 -->
+                    <div class="testimonial-card">
+                        <p>"Being a SHEIN reviewer is the perfect gig for anyone who loves fashion and enjoys sharing their thoughts on new products. I've had a blast!"</p>
+                        <div class="testimonial-author">
+                            <strong>Lola C.</strong>
+                            <span>Style Expert</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <h3><span class="pink">SHEIN</span>Review</h3>
+                    <p>Join our community of fashion enthusiasts and help shape the future of online shopping</p>
+                </div>
+                
+                <!-- Links -->
+                <div class="footer-links">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#nextSection">Benefits</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="https://uplevelrewarded.com/aff_c?offer_id=2224&aff_id=107601&source=Shereviewjob">Apply Now</a></li>
+                    </ul>
+                </div>
+                
+
+            </div>
+            
+            <!-- Copyright -->
+            <div class="footer-bottom">
+                <p>Â© 2025 SHEIN Product Reviewer Program. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Desktop (mouse + hover) is blocked: stop the video
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            var bgv = document.getElementById('heroVideo');
+            if (bgv) { bgv.pause(); bgv.removeAttribute('autoplay'); }
+        }
+
+        // Force video play on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('heroVideo');
+            video.play().catch(function(error) {
+                console.log('Autoplay prevented:', error);
+            });
+        });
+
+        // Also try on window load
+        window.addEventListener('load', function() {
+            var video = document.getElementById('heroVideo');
+            video.play();
+        });
+
+        // Try on first user interaction (touch/click)
+        document.addEventListener('touchstart', function() {
+            var video = document.getElementById('heroVideo');
+            video.play();
+        }, { once: true });
+
+        document.addEventListener('click', function() {
+            var video = document.getElementById('heroVideo');
+            video.play();
+        }, { once: true });
+
+        // Scroll to next section
+        function scrollToNext() {
+            document.getElementById('nextSection').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Check if mobile
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        // Show elements function
+        function showHeroElements() {
+            document.querySelector('.hero-carousel').classList.add('show');
+            document.querySelector('.hero-card').classList.add('show');
+            document.querySelector('.header-text').classList.add('show');
+            document.querySelector('.hero-buttons').classList.add('show');
+            var heroOverlay = document.querySelector('.hero-overlay');
+            if (heroOverlay) heroOverlay.classList.add('show');
+            var mobileCarousel = document.querySelector('.mobile-carousel');
+            if (mobileCarousel) mobileCarousel.classList.add('show');
+            var mobileArrow = document.querySelector('.mobile-scroll-arrow');
+            if (mobileArrow) mobileArrow.classList.add('show');
+            
+            // Start typewriter effect
+            startTypewriter();
+        }
+
+        // Mobile: show immediately, Desktop: 6 second delay
+        if (isMobile()) {
+            showHeroElements();
+        } else {
+            setTimeout(showHeroElements, 6000);
+        }
+
+        // Typewriter marquee effect
+        function startTypewriter() {
+            var phrases = ["For Free", "You Deserve", "You Want"];
+            var currentPhrase = 0;
+            var currentChar = 0;
+            var isDeleting = false;
+            var changingText = document.getElementById('changingText');
+
+            function type() {
+                var phrase = phrases[currentPhrase];
+                
+                if (isDeleting) {
+                    changingText.textContent = phrase.substring(0, currentChar - 1);
+                    currentChar--;
+                } else {
+                    changingText.textContent = phrase.substring(0, currentChar + 1);
+                    currentChar++;
+                }
+
+                var typeSpeed = isDeleting ? 50 : 100;
+
+                if (!isDeleting && currentChar === phrase.length) {
+                    typeSpeed = 2000; // Pause at end
+                    isDeleting = true;
+                } else if (isDeleting && currentChar === 0) {
+                    isDeleting = false;
+                    currentPhrase = (currentPhrase + 1) % phrases.length;
+                    typeSpeed = 500; // Pause before next phrase
+                }
+
+                setTimeout(type, typeSpeed);
+            }
+
+            type();
+        }
+    </script>
+
+</body>
+</html>
+
